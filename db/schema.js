@@ -8,9 +8,14 @@ const typeDefs = gql`
         tecnologia:String
     }
 
+    input CursoInput {
+        tecnologia:String
+    }
+
     type Query {
         obtenerCursos: [Curso]
         obtenerTecnologias: [Tecnologia]
+        getCursesByTecnology(input:CursoInput!):[Curso]
     }
 `;
 
