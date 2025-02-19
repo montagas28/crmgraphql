@@ -7,10 +7,6 @@ const resolvers =require('./db/resolvers');
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context:()=>{
-        const miContext = 'Bayron Miguel Trejo Rosero';
-        return {miContext};
-    }
 });
 
 //arrancar el servidor
