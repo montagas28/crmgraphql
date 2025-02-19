@@ -15,6 +15,7 @@ const resolvers = {
         obtenerCursos: () =>cursos,
         obtenerTecnologias:()=>cursos,
         getCursesByTecnology:(_,{input}, ctx, info)=>{
+            console.log(ctx);
             const result = cursos.filter(curso=>curso.tecnologia===input.tecnologia);
             return result;
         },
