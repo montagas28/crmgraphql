@@ -1,3 +1,4 @@
 #Build director
 node_modules/*
 .vs/*
+variables.env
