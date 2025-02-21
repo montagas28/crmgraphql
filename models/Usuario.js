@@ -23,7 +23,7 @@ const UsuairosSchema = mongoose.Schema({
     },
     creado:{
         type:Date,
-        default:Date.now
+        default:Date.now()
     }
 });
 module.exports=mongoose.model('Usuario', UsuairosSchema);

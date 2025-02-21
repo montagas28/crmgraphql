@@ -1,4 +1,5 @@
 const usuario = require('../models/usuario');
+const Producto =require('../models/Producto');
 const bcryptjs = require('bcryptjs');
 const jwt=require('jsonwebtoken');
 require('dotenv').config({path:'variables.env'});
@@ -8,6 +9,23 @@ const resolvers = {
         obtenerUsuario:async(_,{token})=>{
             const usuarioId=await jwt.verify(token,process.env.SECRETA);
             return usuarioId;
+        },
+        obtenerProductos:async ()=>{
+            try {
+                const productos = await Producto.find({});
+                return productos;    
+            } catch (error) {
+                console.log(error);
+            }
+            
+        },
+        obtnerProductoId: async(_,{id})=>{
+                const prod= await Producto.findById(id);
+                console.log(prod);
+                if (!prod) {
+                    throw new Error('producto no encontrado')
+                }
+                return prod;
         }
     },
     Mutation: {
@@ -53,6 +71,37 @@ const resolvers = {
             return {
                 token:crearToken(existeUsuario,process.env.SECRETA,'24h')
             }
+        },
+        nuevoProducto: async(_,{input})=>{
+            try{
+                const producto=new Producto(input);
+                //almacenar en la bd
+                const resultado = await producto.save();
+                return resultado;
+            }catch (error){
+                console.log(error);
+            }
+        },
+        actualizarProducto:async(_,{id,input})=>{
+            //Revisar si existe el producto
+            let prod= await Producto.findById(id);
+                console.log(prod);
+                if (!prod) {
+                    throw new Error('producto no encontrado')
+                }
+            //Guardamos en la base de datos
+            prod=await Producto.findOneAndUpdate({_id:id},input,{new:true});
+            return prod;
+        },
+        eliminarProducto: async(_,{id})=>{
+            //Revisar si existe el producto
+            let prod= await Producto.findById(id);
+                console.log(prod);
+                if (!prod) {
+                    throw new Error('producto no encontrado')
+                }
+            await Producto.findOneAndDelete({_id:id});
+            return "Producto eliminado";
         }
 }
 }
