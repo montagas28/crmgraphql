@@ -27,6 +27,34 @@ const resolvers = {
                     throw new Error('producto no encontrado')
                 }
                 return prod;
+        },
+        obtenerClientes: async()=>{
+            try {
+                const clientes = await Cliente.find({});
+                return clientes;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        obtenerClienteByVendedor:async(_,{},ctx)=>{
+            try {
+                const clientes = await Cliente.find({vendedor:ctx.usuario.id.toString()});
+                return clientes;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        obtenerClienteId:async (_,{id},ctx)=>{
+            //Revisar si el cliente existe o no
+            const clie = await Cliente.findById(id);
+            if (!clie) {
+                throw new Error('El cliente no existe');
+            }
+            //Quien lo creo puede vero
+            if (clie.vendedor.toString() != ctx.usuario.id) {
+                throw new Error ('No tienes las credenciales');
+            }
+            return clie;
         }
     },
     Mutation: {
@@ -104,7 +132,7 @@ const resolvers = {
             await Producto.findOneAndDelete({_id:id});
             return "Producto eliminado";
         },
-        nuevoCliente: async(_,{input})=>{
+        nuevoCliente: async(_,{input},ctx)=>{
             //verificar si el cliente ya está registrado
             const {email}= input;
             const cliente = await Cliente.findOne({email});
@@ -112,7 +140,7 @@ const resolvers = {
                 throw new Error('Ya existe el cliente');
             }
             const nuevoCliente = new Cliente(input);
-            nuevoCliente.vendedor="67b7654a8458bbcf5d8c8bc5";
+            nuevoCliente.vendedor=ctx.usuario.id;
             //almacenar en la bd
             try {
                 
@@ -121,6 +149,33 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             }   
+        },
+        actualizarCliente:async(_,{id,input},ctx)=>{
+            //Revisar si existe el cliente
+            let clie= await Cliente.findById(id);
+                if (!clie) {
+                    throw new Error('Cliente no encontrado')
+                }
+            //verificar si usuario puede editar ese cliente
+            if (clie.vendedor.toString() != ctx.usuario.id) {
+                throw new Error ('No tienes las credenciales');
+            }
+            //Guardamos en la base de datos
+            clie=await Cliente.findOneAndUpdate({_id:id},input,{new:true});
+            return clie;            
+        },
+        eliminarCliente:async(_,{id},ctx)=>{
+            //existe cliente
+            let clie= await Cliente.findById(id);
+                if (!clie) {
+                    throw new Error('Cliente no encontrado')
+                }
+            //verificar si usuario puede eliminar cliente
+            if (clie.vendedor.toString() != ctx.usuario.id) {
+                throw new Error ('No tienes las credenciales');
+            }
+            clie=await Cliente.findOneAndDelete({_id:id});
+            return "Cliente eliminado";
         }
 }
 }

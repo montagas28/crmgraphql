@@ -30,6 +30,10 @@ const typeDefs = gql`
         #Productos
         obtenerProductos:[Producto]
         obtnerProductoId(id:ID!):Producto
+        #clientes
+        obtenerClientes:[Cliente]
+        obtenerClienteByVendedor:[Cliente]
+        obtenerClienteId(id:ID!):Cliente
     },
     type Producto{
         id:ID
@@ -71,6 +75,8 @@ const typeDefs = gql`
 
         #clientes
         nuevoCliente(input:ClienteInput):Cliente
+        actualizarCliente(id:ID!,input:ClienteInput):Cliente
+        eliminarCliente(id:ID!):String
     }
 `;
 
