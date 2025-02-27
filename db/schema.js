@@ -39,6 +39,11 @@ const typeDefs = gql`
         obtenerPedidosByUsuario:[Pedido]
         obtenerPedidoById(id:ID!):Pedido
         obtenerPedidoByState(state:EstadoPedido):[Pedido]
+
+        #Busquedas avanzadas
+        mejoresClientes:[TopCliente]
+        mejoresVendedores:[TopVendedor]
+        buscarProducto(texto:String!):[Producto]
     },
     type Producto{
         id:ID
@@ -61,6 +66,14 @@ const typeDefs = gql`
         telefono:String
         vendedor:ID
     }    
+    type TopCliente{
+        total:Float
+        cliente:[Cliente]
+    }  
+    type TopVendedor{
+        total:Float
+        vendedor:[Usuario]
+    }  
     input ClienteInput{
         nombre:String!
         apellido:String!
